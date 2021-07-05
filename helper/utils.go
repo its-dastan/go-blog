@@ -7,7 +7,7 @@ import (
 
 type Response struct {
 	Code int         `json:"code"`
-	Msg  string      `json:"msg"`
+	Msg  interface{} `json:"msg"`
 	Data interface{} `json:"data"`
 }
 

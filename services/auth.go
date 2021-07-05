@@ -2,11 +2,9 @@ package services
 
 import (
 	"context"
-	"fmt"
 	"github.com/its-dastan/go-blog/db"
 	"github.com/its-dastan/go-blog/models"
 	"go.mongodb.org/mongo-driver/bson"
-	"log"
 )
 
 const (
@@ -14,33 +12,37 @@ const (
 	coll = "users"
 )
 
-func Register(user models.User) {
-	fmt.Println(user)
+func Register(user models.User) map[string]interface{} {
 	client := db.Connect()
 	defer db.DisConnect(context.Background(), client)
 	collection := client.Database(dbs).Collection(coll)
-	curr, err := collection.Find(context.Background(), bson.M{"email": user.Email})
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer curr.Close(context.Background())
-	var result []bson.M
-	if err := curr.All(context.TODO(), &result); err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println(result)
-
-	if len(result) > 0 {
-		fmt.Println("Hello")
-
-		fmt.Println("Email already exists")
-	} else {
+	var result bson.M
+	if err := collection.FindOne(context.TODO(), bson.M{"email": user.Email}).Decode(&result); err != nil {
 		userT, _ := bson.Marshal(user)
-		res, err := collection.InsertOne(context.Background(), userT)
+		_, err := collection.InsertOne(context.Background(), userT)
 		if err != nil {
-			log.Fatal(err)
+			return map[string]interface{}{
+				"Status": false,
+				"Msg":    "Account couldn't be created. Please try again!",
+			}
 		}
-		fmt.Printf("inserted document with ID %v\n", res.InsertedID)
-	}
+		var result1 bson.M
 
+		if err := collection.FindOne(context.TODO(), bson.M{"email": user.Email}).Decode(&result1); err != nil {
+			return map[string]interface{}{
+				"Status": false,
+				"Msg":    "Error while getting the user",
+			}
+		}
+		return map[string]interface{}{
+			"Status": true,
+			"Msg":    "Successfully Registered",
+			"Data":   result1,
+		}
+	} else {
+		return map[string]interface{}{
+			"Status": false,
+			"Msg":    "Email Already exists",
+		}
+	}
 }

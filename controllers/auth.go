@@ -9,10 +9,6 @@ import (
 	"net/http"
 )
 
-const (
-	collection = "User"
-)
-
 var Users []models.User
 
 func Register(w http.ResponseWriter, r *http.Request) {
@@ -23,11 +19,14 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		helper.ResponseWithJson(w, http.StatusBadRequest, helper.Response{Code: http.StatusBadRequest, Msg: "Please Enter all the data correctly"})
 		return
 	}
-
-	services.Register(user)
-	Users = append(Users, user)
-
-	helper.ResponseWithJson(w, http.StatusOK, helper.Response{Code: http.StatusOK, Msg: "Successfully created", Data: Users})
+	response := services.Register(user)
+	fmt.Println(response["Msg"])
+	fmt.Println(response["Status"])
+	if response["Status"] == false {
+		helper.ResponseWithJson(w, http.StatusBadRequest, helper.Response{Code: http.StatusBadRequest, Msg: response["Msg"]})
+	} else {
+		helper.ResponseWithJson(w, http.StatusOK, helper.Response{Code: http.StatusOK, Msg: response["Msg"], Data: response["Data"]})
+	}
 }
 
 func GetUsers(w http.ResponseWriter, r *http.Request) {
