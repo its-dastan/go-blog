@@ -46,3 +46,31 @@ func Register(user models.User) map[string]interface{} {
 		}
 	}
 }
+
+func GetUsers() map[string]interface{}{
+	client := db.Connect()
+	defer db.DisConnect(context.Background(), client)
+	collection := client.Database(dbs).Collection(coll)
+	curr, err:= collection.Find(context.TODO(), bson.D{})
+	if err!=nil{
+		return map[string]interface{}{
+			"Status": false,
+			"Msg":    "Internal Server Error",
+		}
+	}
+	var result []bson.M
+	if err:= curr.All(context.Background(), &result); err!= nil{
+		return map[string]interface{}{
+			"Status": false,
+			"Msg":    "Internal Server Error",
+		}
+	}
+	return map[string]interface{}{
+		"Status": true,
+		"Msg":    "Successfully Registered",
+		"Data":   result,
+	}
+
+	//fmt.Printf("%T\n", result)
+	//fmt.Println(result)
+}

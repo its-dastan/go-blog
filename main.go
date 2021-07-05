@@ -21,7 +21,7 @@ func server(w http.ResponseWriter, r *http.Request) {
 func main() {
 
 
-	fmt.Print("Listening on 3000")
+	fmt.Println("Listening on 3000")
 
 	r:= routes.NewRouter()
 	s := &http.Server{
