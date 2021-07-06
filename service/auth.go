@@ -23,13 +23,18 @@ func Register(user map[string]interface{}, result interface{}) error {
 		fmt.Println("email already exists")
 		return errors.New("email already exists")
 	}
+	userCopy := map[string]interface{}{
+		"email":user["email"],
+		"password":user["password"],
+	}
 	hashedPassword, err := helper.EncryptPassword(user["password"].(string))
 	if err != nil {
 		return errors.New("please choose a different password")
 	}
 	user["password"] = string(hashedPassword)
 	_ = c.Insert(user)
-	return c.Find(bson.M{"email": user["email"]}).One(result)
+
+	return Login(userCopy, result)
 }
 
 func Login(user map[string]interface{}, result interface{}) error {
