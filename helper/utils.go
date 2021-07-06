@@ -2,6 +2,7 @@ package helper
 
 import (
 	"encoding/json"
+	"golang.org/x/crypto/bcrypt"
 	"net/http"
 )
 
@@ -16,4 +17,9 @@ func ResponseWithJson(w http.ResponseWriter, code int, payload interface{}) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
 	w.Write(response)
+}
+
+
+func EncryptPassword(password string)([]byte, error){
+	return bcrypt.GenerateFromPassword([]byte(password), 15)
 }

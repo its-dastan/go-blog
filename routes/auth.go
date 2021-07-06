@@ -18,6 +18,7 @@ var routes []Route
 func init() {
 	register("GET", "/get-users", controllers.GetUsers, nil)
 	register("POST", "/register", controllers.Register, nil)
+	register("POST", "/login", controllers.Login, nil)
 }
 
 func NewRouter() *mux.Router {
