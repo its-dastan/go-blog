@@ -10,19 +10,12 @@ import (
 	"time"
 )
 
-func handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hi there, I love %s! ", r.URL.Path[1:])
-}
 
-func server(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Server is running on", 3000)
-}
+
+
 
 func main() {
-
-
-	fmt.Println("Listening on 3000")
-
+	fmt.Println("Hello")
 	r:= routes.NewRouter()
 	s := &http.Server{
 		Addr:           ":3000",
