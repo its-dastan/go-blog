@@ -17,8 +17,9 @@ type Route struct {
 var routes []Route
 
 func init() {
-	register("POST", "/register", controllers.Register, nil)
-	register("POST", "/login", controllers.Login, nil)
+	register("POST", "/auth/register", controllers.Register, nil)
+	register("POST", "/auth/login", controllers.Login, nil)
+	register("POST", "/blog/add-blog/{userId}", controllers.AddBlog, nil)
 }
 
 func NewRouter() *mux.Router {
