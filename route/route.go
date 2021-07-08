@@ -20,6 +20,7 @@ func init() {
 	register("POST", "/auth/register", controllers.Register, nil)
 	register("POST", "/auth/login", controllers.Login, nil)
 	register("POST", "/blog/add-blog/{userId}", controllers.AddBlog, nil)
+	register("GET", "/blog/like-dislike/{userId}/{blogId}", controllers.LikeOrDislike, nil)
 }
 
 func NewRouter() *mux.Router {

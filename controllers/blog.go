@@ -33,3 +33,18 @@ func AddBlog(w http.ResponseWriter, r *http.Request) {
 	}
 	helper.ResponseWithJson(w, http.StatusOK, helper.Response{Code: http.StatusOK, Msg: "Successfully registered", Data: result})
 }
+
+func LikeOrDislike(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	var likeData models.Likes
+	likeData.LikedAt = time.Now()
+	likeData.LikedBy = bson.ObjectIdHex(vars["userId"])
+	likeData.BlogId = bson.ObjectIdHex(vars["blogId"])
+	//fmt.Println(likeData)
+	str,err := service.LikeOrDislike(likeData)
+	if err != nil {
+		helper.ResponseWithJson(w, http.StatusBadRequest, helper.Response{Code: http.StatusBadRequest, Msg: err.Error()})
+		return
+	}
+	helper.ResponseWithJson(w, http.StatusOK, helper.Response{Code: http.StatusOK, Msg: str})
+}
