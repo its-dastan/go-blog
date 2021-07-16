@@ -24,6 +24,16 @@ func AddBlog(blog *models.Blog, result interface{}) error {
 	return c.Find(nil).Skip(count - 1).One(result)
 }
 
+func UpdateBlog(blog *models.Blog, blogId string) (string, error) {
+	s, c := db.Connect(blogsCollection)
+	defer s.Close()
+	err := c.UpdateId(bson.ObjectIdHex(blogId), bson.M{"$set": blog})
+	if err != nil {
+		return "", err
+	}
+	return "Updated the blog", nil
+}
+
 func LikeOrDislike(like models.Likes) (string, error) {
 	// Linking to the likes, blogs, user Collection
 	s, c := db.Connect(likesCollection)
