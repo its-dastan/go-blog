@@ -1,11 +1,11 @@
 package route
 
 import (
+	"net/http"
+
 	"github.com/gorilla/mux"
 	"github.com/its-dastan/go-blog/controllers"
-	"net/http"
 )
-
 
 type Route struct {
 	Method     string
@@ -19,9 +19,11 @@ var routes []Route
 func init() {
 	register("POST", "/auth/register", controllers.Register, nil)
 	register("POST", "/auth/login", controllers.Login, nil)
+	register("GET", "/", controllers.GetBlogs, nil)
 	register("POST", "/blog/add-blog/{userId}", controllers.AddBlog, nil)
 	register("GET", "/blog/like-dislike/{userId}/{blogId}", controllers.LikeOrDislike, nil)
 	register("PUT", "/blog/update-blog/{blogId}", controllers.UpdateBlog, nil)
+	register("POST", "/blog/add-comment/{userId}/{blogId}", controllers.AddComment, nil)
 }
 
 func NewRouter() *mux.Router {
@@ -41,4 +43,3 @@ func NewRouter() *mux.Router {
 func register(method, pattern string, handler http.HandlerFunc, middleware mux.MiddlewareFunc) {
 	routes = append(routes, Route{method, pattern, handler, middleware})
 }
-

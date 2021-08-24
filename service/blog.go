@@ -9,9 +9,16 @@ import (
 )
 
 const (
-	blogsCollection = "blogs"
-	likesCollection = "likes"
+	blogsCollection    = "blogs"
+	likesCollection    = "likes"
+	commentsCollection = "comments"
 )
+
+func GetBlogs(results interface{}) error{
+	s, c := db.Connect(blogsCollection)
+	defer s.Close()
+	return c.Find(nil).All(results)
+}
 
 func AddBlog(blog *models.Blog, result interface{}) error {
 	s, c := db.Connect(blogsCollection)
@@ -40,12 +47,12 @@ func LikeOrDislike(like models.Likes) (string, error) {
 	s1, c1 := db.Connect(blogsCollection)
 	s2, c2 := db.Connect(usersCollection)
 
-	//Closing two sessions
+	// Closing two sessions
 	defer s.Close()
 	defer s1.Close()
 	defer s2.Close()
 
-	//Creating variables of likeD
+	// Creating variables of likeD
 	var likeD *models.Likes
 
 	err := c.Find(bson.M{"likedBy": like.LikedBy, "blogId": like.BlogId}).One(&likeD)
@@ -116,4 +123,36 @@ func LikeOrDislike(like models.Likes) (string, error) {
 		}
 		return "Liked The Blog", nil
 	}
+}
+
+func AddComment(comment *models.Comments) (string, error) {
+	s, c := db.Connect(blogsCollection)
+	defer s.Close()
+	var result *models.Blog
+	err := c.FindId(comment.BlogId).One(&result)
+	if err != nil {
+		return "", err
+	}
+	s1, c1 := db.Connect(commentsCollection)
+	defer s1.Close()
+	err = c1.Insert(comment)
+	if err != nil {
+		return "", err
+	}
+	var commentResult *models.Comments
+	count, err := c1.Count()
+	err = c1.Find(nil).Skip(count - 1).One(&commentResult)
+	if err != nil {
+		return "", err
+	}
+	change := bson.M{"$push": bson.M{"comments": commentResult.ID}}
+	err = c.UpdateId(comment.BlogId, change)
+	if err != nil {
+		return "", err
+	}
+	err = c.FindId(comment.BlogId).One(&result)
+	if err != nil {
+		return "", err
+	}
+	return "Commented", nil
 }
