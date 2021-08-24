@@ -37,6 +37,7 @@ func NewRouter() *mux.Router {
 			r.Handler(route.Handler)
 		}
 	}
+	router.HandleFunc("/ws", controllers.Handler)
 	return router
 }
 

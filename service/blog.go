@@ -70,7 +70,7 @@ func LikeOrDislike(like models.Likes) (string, error) {
 		}
 		_, err = c1.FindId(likeD.BlogId).Apply(change, nil)
 		if err != nil {
-			return "", nil
+			return "", err
 		}
 
 		// removing the blog to the user's liked blogs

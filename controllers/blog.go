@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"time"
 
@@ -81,7 +82,7 @@ func LikeOrDislike(w http.ResponseWriter, r *http.Request) {
 		helper.ResponseWithJson(w, http.StatusBadRequest, helper.Response{Code: http.StatusBadRequest, Msg: err.Error()})
 		return
 	}
-
+	log.Println("str")
 	helper.ResponseWithJson(w, http.StatusOK, helper.Response{Code: http.StatusOK, Msg: str})
 }
 
