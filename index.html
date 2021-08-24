@@ -8,19 +8,11 @@
 <script>
     let socket = new WebSocket("ws://localhost:3000/ws")
     console.log("Attempting Websocket Connection")
-    socket.onopen = () =>{
-        console.log("successfully connected")
-        socket.send("High from the client")
+    socket.onopen = (data) =>{
+        console.log(data)
     }
 
-    socket.onclose = (event) =>{
-        console.log("socket closed")
 
-    }
-
-    socket.onerror = (error) =>{
-        console.log("socket error")
-    }
 </script>
 </body>
 </html>
