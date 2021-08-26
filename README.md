@@ -23,7 +23,7 @@ $ go run main.go
 - gorilla/mux : Package [gorilla/mux](https://github.com/gorilla/mux) implements a request router and dispatcher for matching incoming requests to their respective handler.
 - gorilla/websocket : The Gorilla [WebSocket](https://github.com/gorilla/websocket) package provides a complete and tested implementation of the WebSocket protocol. The package API is stable.
 
-## Differ Operation : It's Routes
+## Different Operation : It's Routes
 * **Login** : localhost:3000/auth/login (POST)
 * **Register** :localhost:3000/auth/register (POST)
 * **Get All Blogs** : localhost:3000 (GET)
