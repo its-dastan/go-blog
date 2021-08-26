@@ -16,7 +16,7 @@ $ go mod tidy
 
 ### Run Server
 ```
-$ go run server.go
+$ go run main.go
 ```
 
 ### About Packages:
