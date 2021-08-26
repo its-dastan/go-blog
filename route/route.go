@@ -19,7 +19,7 @@ var routes []Route
 func init() {
 	register("POST", "/auth/register", controllers.Register, nil)
 	register("POST", "/auth/login", controllers.Login, nil)
-	register("GET", "/", controllers.GetBlogs, nil)
+	//register("GET", "/", controllers.GetBlogs, nil)
 	register("POST", "/blog/add-blog/{userId}", controllers.AddBlog, nil)
 	register("GET", "/blog/like-dislike/{userId}/{blogId}", controllers.LikeOrDislike, nil)
 	register("PUT", "/blog/update-blog/{blogId}", controllers.UpdateBlog, nil)
@@ -37,7 +37,6 @@ func NewRouter() *mux.Router {
 			r.Handler(route.Handler)
 		}
 	}
-	router.HandleFunc("/ws", controllers.Handler)
 	return router
 }
 
