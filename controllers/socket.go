@@ -3,27 +3,34 @@ package controllers
 import (
 	"fmt"
 	socketio "github.com/googollee/go-socket.io"
+	"github.com/googollee/go-socket.io/engineio"
 	"github.com/its-dastan/go-blog/models"
 	"github.com/its-dastan/go-blog/service"
 	"log"
 	"time"
 )
 
-func Handler() *socketio.Server{
-
-	server := socketio.NewServer(nil)
+func Handler() *socketio.Server {
+	options := &engineio.Options{
+		PingTimeout: time.Hour,
+	}
+	server := socketio.NewServer(options)
 	server.OnEvent("/", "notice", func(s socketio.Conn, msg string) {
-		s.SetContext("")
-		for{
+		ticker := time.NewTicker(time.Second * 10)
+		i := 0
+		for {
 			var results []*models.Blog
-			err:= service.GetBlogs(&results)
+			err := service.GetBlogs(&results)
 			if err != nil {
 				log.Println(err)
 				return
 			}
 			s.Emit("reply", results)
-			time.Sleep(time.Second*10)
+			i++
+			fmt.Println(i)
+			<-ticker.C
 		}
+
 	})
 
 	server.OnError("/", func(s socketio.Conn, e error) {
