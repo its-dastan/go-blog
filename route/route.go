@@ -19,9 +19,9 @@ var routes []Route
 func init() {
 	register("POST", "/auth/register", controllers.Register, nil)
 	register("POST", "/auth/login", controllers.Login, nil)
-	//register("GET", "/", controllers.GetBlogs, nil)
+	register("GET", "/", controllers.GetBlogs, nil)
 	register("POST", "/blog/add-blog/{userId}", controllers.AddBlog, nil)
-	register("GET", "/blog/like-dislike/{userId}/{blogId}", controllers.LikeOrDislike, nil)
+	register("GET", "/blog/like-dislike/{userId}/{blogId}", controllers.LikeOrDislikeBlog, nil)
 	register("PUT", "/blog/update-blog/{blogId}", controllers.UpdateBlog, nil)
 	register("POST", "/blog/add-comment/{userId}/{blogId}", controllers.AddComment, nil)
 }
