@@ -3,12 +3,13 @@ package main
 import (
 	"fmt"
 	"github.com/its-dastan/go-blog/controllers"
-
+	"github.com/its-dastan/go-blog/db"
 	"github.com/its-dastan/go-blog/route"
 	"net/http"
 )
 
 func main() {
+	fmt.Println(db.ListBucket())
 	r := route.NewRouter()
 	server := controllers.Handler()
 	go server.Serve()
