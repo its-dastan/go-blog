@@ -14,10 +14,10 @@ const (
 	commentsCollection = "comments"
 )
 
-func GetBlogs(results interface{}) error{
+func GetBlogs(results interface{}) error {
 	s, c := db.Connect(blogsCollection)
 	defer s.Close()
-		return c.Find(nil).All(results)
+	return c.Find(nil).All(results)
 }
 
 func AddBlog(blog *models.Blog, result interface{}) error {

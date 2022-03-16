@@ -32,7 +32,7 @@ func Register(user *models.User, result interface{}) error {
 	}
 	user.Password = string(hashedPassword)
 	err = c.Insert(user)
-	if err!=nil{
+	if err != nil {
 		return errors.New("internal error! please try again later")
 	}
 	return Login(userCopy, result)
