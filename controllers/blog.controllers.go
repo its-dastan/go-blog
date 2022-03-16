@@ -31,7 +31,6 @@ func AddBlog(w http.ResponseWriter, r *http.Request) {
 	var result *models.Blog
 	//var blogData *models.Blog
 
-
 	blogData := &models.Blog{
 		Caption: r.Form.Get("caption"),
 	}
