@@ -16,11 +16,16 @@ import (
 )
 
 func GetImage(w http.ResponseWriter, r *http.Request) {
+	//ileBytes, err := ioutil.ReadFile("temp-images/upload-612818806fing.jpg")
+	//fmt.Println(err)
+	//fmt.Println(ileBytes)
 	key := r.URL.Query().Get("key")
+	fmt.Println(key)
 	buffer := db.GetImage(key)
-	//w.WriteHeader(http.)
+	//w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "image/png")
 	w.Write(buffer)
+	return
 }
 
 func GetBlogs(w http.ResponseWriter, r *http.Request) {

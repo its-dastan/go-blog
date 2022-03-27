@@ -9,7 +9,6 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/globalsign/mgo/bson"
 	"github.com/joho/godotenv"
-	"io"
 	"log"
 	"mime/multipart"
 	"net/http"
@@ -75,6 +74,7 @@ func UploadFileToS3(file multipart.File, fileHeader *multipart.FileHeader) (stri
 }
 
 func GetImage(key string) []byte {
+
 	params := &s3.GetObjectInput{
 		Bucket: aws.String(os.Getenv(bucketName)), // Required
 		Key:    aws.String(key),                   // Required
@@ -83,17 +83,8 @@ func GetImage(key string) []byte {
 	if err != nil {
 		fmt.Println(err)
 	}
-	buffer := make([]byte, *resp.ContentLength)
-	defer resp.Body.Close()
-	var bbuffer bytes.Buffer
-	for true {
 
-		num, rerr := resp.Body.Read(buffer)
-		if num > 0 {
-			bbuffer.Write(buffer[:num])
-		} else if rerr == io.EOF || rerr != nil {
-			break
-		}
-	}
+	buffer := make([]byte, *resp.ContentLength)
+	_, _ = resp.Body.Read(buffer)
 	return buffer
 }
