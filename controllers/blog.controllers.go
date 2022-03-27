@@ -3,7 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"github.com/its-dastan/go-blog/db"
 	"log"
 	"net/http"
 	"time"
@@ -14,6 +14,14 @@ import (
 	"github.com/its-dastan/go-blog/models"
 	"github.com/its-dastan/go-blog/service"
 )
+
+func GetImage(w http.ResponseWriter, r *http.Request) {
+	key := r.URL.Query().Get("key")
+	buffer := db.GetImage(key)
+	//w.WriteHeader(http.)
+	w.Header().Set("Content-Type", "image/png")
+	w.Write(buffer)
+}
 
 func GetBlogs(w http.ResponseWriter, r *http.Request) {
 	var results []*models.Blog
@@ -35,36 +43,24 @@ func AddBlog(w http.ResponseWriter, r *http.Request) {
 		Caption: r.Form.Get("caption"),
 	}
 
-	file, handler, err := r.FormFile("nyFile")
+	file, handler, err := r.FormFile("myFile")
 	if err != nil {
 		fmt.Println("Error Retrieving the File")
 		fmt.Println(err)
 		return
 	}
 	defer file.Close()
-	tempFile, err := ioutil.TempFile("temp-images", "upload-*"+handler.Filename)
+
+	fileName, err := db.UploadFileToS3(file, handler)
 	if err != nil {
-		helper.ResponseWithJson(w, http.StatusBadRequest, helper.Response{Code: http.StatusBadRequest, Msg: err.Error()})
-		return
-	}
-	defer tempFile.Close()
-	fileBytes, err := ioutil.ReadAll(file)
-	if err != nil {
-		helper.ResponseWithJson(w, http.StatusBadRequest, helper.Response{Code: http.StatusBadRequest, Msg: err.Error()})
-		return
-	}
-	_, err = tempFile.Write(fileBytes)
-	//fmt.Fprintf(w, "Successfully Uploaded File\n")
-	//err = json.NewDecoder(r.Body).Decode(&blogData)
-	if err != nil {
-		helper.ResponseWithJson(w, http.StatusBadRequest, helper.Response{Code: http.StatusBadRequest, Msg: err.Error()})
-		return
+		//fmt.Fprintf(w, "Could not upload file")
+		fmt.Println(err)
 	}
 	if blogData.Caption == "" && blogData.Image == "" && blogData.Video == "" {
 		helper.ResponseWithJson(w, http.StatusBadRequest, helper.Response{Code: http.StatusBadRequest, Msg: "Please give an input"})
 		return
 	}
-	blogData.Image = tempFile.Name()
+	blogData.Image = fileName
 	blogData.PostedBy = bson.ObjectIdHex(vars["userId"])
 	blogData.CreatedAt = time.Now()
 	err = service.AddBlog(blogData, &result)

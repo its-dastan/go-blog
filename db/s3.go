@@ -2,12 +2,14 @@ package db
 
 import (
 	"bytes"
+	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/globalsign/mgo/bson"
 	"github.com/joho/godotenv"
+	"io"
 	"log"
 	"mime/multipart"
 	"net/http"
@@ -55,9 +57,9 @@ func UploadFileToS3(file multipart.File, fileHeader *multipart.FileHeader) (stri
 	// filename, content-type and storage class of the file
 	// you're uploading
 	_, err := s3Session.PutObject(&s3.PutObjectInput{
-		Bucket:               aws.String("test-bucket"),
-		Key:                  aws.String(tempFileName),
-		ACL:                  aws.String("public-read"), // could be private if you want it to be access by only authorized users
+		Bucket: aws.String("go-blog-2022"),
+		Key:    aws.String(tempFileName),
+		//ACL:                  aws.String("public-read"), // could be private if you want it to be access by only authorized users
 		Body:                 bytes.NewReader(buffer),
 		ContentLength:        aws.Int64(int64(size)),
 		ContentType:          aws.String(http.DetectContentType(buffer)),
@@ -70,4 +72,28 @@ func UploadFileToS3(file multipart.File, fileHeader *multipart.FileHeader) (stri
 	}
 
 	return tempFileName, err
+}
+
+func GetImage(key string) []byte {
+	params := &s3.GetObjectInput{
+		Bucket: aws.String(os.Getenv(bucketName)), // Required
+		Key:    aws.String(key),                   // Required
+	}
+	resp, err := s3Session.GetObject(params)
+	if err != nil {
+		fmt.Println(err)
+	}
+	buffer := make([]byte, *resp.ContentLength)
+	defer resp.Body.Close()
+	var bbuffer bytes.Buffer
+	for true {
+
+		num, rerr := resp.Body.Read(buffer)
+		if num > 0 {
+			bbuffer.Write(buffer[:num])
+		} else if rerr == io.EOF || rerr != nil {
+			break
+		}
+	}
+	return buffer
 }

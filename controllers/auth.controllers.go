@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/its-dastan/go-blog/helper"
 	"github.com/its-dastan/go-blog/models"
 	"github.com/its-dastan/go-blog/service"
@@ -12,6 +13,8 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	var registerData *models.User
 	var result *models.User
 	err := json.NewDecoder(r.Body).Decode(&registerData)
+	fmt.Println(registerData)
+
 	if err != nil || registerData.FirstName == "" || registerData.LastName == "" || registerData.Email == "" || registerData.Password == "" {
 		helper.ResponseWithJson(w, http.StatusBadRequest, helper.Response{Code: http.StatusBadRequest, Msg: "Please type all field"})
 		return
@@ -22,7 +25,6 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	helper.ResponseWithJson(w, http.StatusOK, helper.Response{Code: http.StatusOK, Msg: "Successfully registered", Data: result})
-
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
