@@ -7,6 +7,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"github.com/globalsign/mgo/bson"
 	"github.com/joho/godotenv"
 	"log"
@@ -75,16 +76,14 @@ func UploadFileToS3(file multipart.File, fileHeader *multipart.FileHeader) (stri
 
 func GetImage(key string) []byte {
 
-	params := &s3.GetObjectInput{
+	buff := &aws.WriteAtBuffer{}
+	s3dl := s3manager.NewDownloader(session.Must(session.NewSession(&aws.Config{Region: aws.String(os.Getenv(region)), Credentials: credentials.NewStaticCredentials(os.Getenv(accessId), os.Getenv(accessKey), "")})))
+	_, err := s3dl.Download(buff, &s3.GetObjectInput{
 		Bucket: aws.String(os.Getenv(bucketName)), // Required
 		Key:    aws.String(key),                   // Required
-	}
-	resp, err := s3Session.GetObject(params)
+	})
 	if err != nil {
 		fmt.Println(err)
 	}
-
-	buffer := make([]byte, *resp.ContentLength)
-	_, _ = resp.Body.Read(buffer)
-	return buffer
+	return buff.Bytes()
 }
